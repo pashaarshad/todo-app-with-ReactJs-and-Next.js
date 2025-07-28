@@ -10,6 +10,14 @@ interface Todo {
   dueDate?: Date;
 }
 
+interface SavedTodo {
+  id: number;
+  title: string;
+  completed: boolean;
+  createdAt: string;
+  dueDate?: string;
+}
+
 export default function TodoApp() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [inputValue, setInputValue] = useState('');
@@ -20,11 +28,12 @@ export default function TodoApp() {
     const savedTodos = localStorage.getItem('todos');
     if (savedTodos) {
       try {
-        const parsedTodos = JSON.parse(savedTodos);
-        // Convert createdAt strings back to Date objects
-        const todosWithDates = parsedTodos.map((todo: any) => ({
+        const parsedTodos: SavedTodo[] = JSON.parse(savedTodos);
+        // Convert createdAt and dueDate strings back to Date objects
+        const todosWithDates = parsedTodos.map((todo: SavedTodo) => ({
           ...todo,
-          createdAt: new Date(todo.createdAt)
+          createdAt: new Date(todo.createdAt),
+          dueDate: todo.dueDate ? new Date(todo.dueDate) : undefined
         }));
         setTodos(todosWithDates);
       } catch (error) {
